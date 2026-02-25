@@ -30,7 +30,9 @@ async def generate(data:dict):
 
     Keep answers short and clear.
     """
-    response=ollama.chat(
+    # Create an Ollama client pointing to the correct host
+    client = ollama.Client(host=os.getenv("OLLAMA_HOST", "http://localhost:11434"))
+    response=client.chat(
         model="llama3.2:3b",
         messages=[{"role":"user","content":prompt}]
     )

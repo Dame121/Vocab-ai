@@ -1,0 +1,23 @@
+services:
+  # ---------- Ollama LLM Server ----------
+  ollama:
+    image: ollama/ollama          # Official Ollama Docker image
+    container_name: ollama
+    ports:
+      - "11434:11434"             # Ollama's API port
+    volumes:
+      - ollama_data:/root/.ollama # Persist downloaded models across restarts
+
+  # ---------- Your FastAPI App ----------
+  vocabai:
+    build: .                      # Build from the Dockerfile in current directory
+    container_name: vocabai
+    ports:
+      - "8000:8000"               # Map host port 8000 → container port 8000
+    depends_on:
+      - ollama                    # Start Ollama before this app
+    environment:
+      - OLLAMA_HOST=http://ollama:11434  # Tell the app where Ollama lives
+
+volumes:
+  ollama_data:                    # Named volume to persist Ollama models
